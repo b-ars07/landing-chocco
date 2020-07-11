@@ -1,4 +1,3 @@
-
 const { src, dest, task, series, watch, parallel } = require("gulp");
 const rm = require( 'gulp-rm' );
 const sass = require('gulp-sass');
@@ -14,6 +13,8 @@ const uglify = require('gulp-uglify');
 const svgo = require('gulp-svgo');
 const svgSprite = require('gulp-svg-sprite');
 const gulpif = require('gulp-if');
+const imagemin = require('gulp-imagemin');
+
 
 const env = process.env.NODE_ENV;
 
@@ -85,8 +86,18 @@ task( 'icons', () => {
     .pipe(dest("dist/images/icons"));
 });
 
-task( 'images', () => {
-    return src("src/images/*.png")
+// task( 'images', () => {
+//     return src("src/images/*.png")
+//     .pipe(dest("dist/images"));
+// });
+
+task("images", function() {
+  return src("src/images/*.{png,jpg,svg}")
+    .pipe(imagemin([
+      imagemin.optipng({ optimizationLevel: 3 }),
+      imagemin.mozjpeg({ progressive: true }),
+      imagemin.svgo()
+    ]))
     .pipe(dest("dist/images"));
 });
 
